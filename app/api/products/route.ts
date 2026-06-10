@@ -8,6 +8,7 @@ import type { CreateProductType } from "@/lib/validation";
 export async function GET(): Promise<NextResponse<ApiResponse<Product[]>>> {
   try {
     console.log("[GET /api/products] Fetching all products");
+    console.log("DATABASE_URL =", process.env.DATABASE_URL);
     const products = await prisma.product.findMany({
       orderBy: { createdAt: "desc" },
     });
@@ -83,16 +84,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       { status: 201 }
     );
   } catch (error) {
-    console.error("[POST /api/products] Error:", error);
-    if (error instanceof Error && error.message.includes("Unique constraint failed")) {
-      return NextResponse.json(
-        { success: false, error: "Product name already exists" },
-        { status: 400 }
-      );
-    }
-    return NextResponse.json(
-      { success: false, error: "Failed to create product" },
-      { status: 500 }
-    );
-  }
+  console.error("[GET /api/products] Error:", error);
+
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : JSON.stringify(error),
+    },
+    { status: 500 }
+  );
+}
 }

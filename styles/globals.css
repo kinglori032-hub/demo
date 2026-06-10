@@ -27,6 +27,7 @@ html {
 
 /* Dark theme input styles */
 @layer components {
+
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -35,20 +36,19 @@ html {
   input[type="date"],
   textarea,
   select {
-    @apply bg-card border border-border text-text-primary rounded-lg px-4 py-2.5 transition-all duration-200;
+    @apply w-full bg-card border border-border text-text-primary rounded-lg px-4 py-2.5 transition-all duration-200;
   }
-  
+
   input:focus,
   textarea:focus,
   select:focus {
     @apply outline-none border-accent bg-card shadow-accent-glow;
   }
-  
+
   input::placeholder {
     @apply text-text-muted;
   }
 
-  /* Dark button styles */
   .btn-primary {
     @apply bg-accent hover:bg-amber-600 text-black font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-accent-glow disabled:opacity-50 disabled:cursor-not-allowed;
   }
@@ -65,12 +65,10 @@ html {
     @apply bg-transparent hover:bg-surface text-text-primary border border-border px-4 py-2.5 rounded-lg transition-all duration-200;
   }
 
-  /* Card styles */
   .card {
     @apply bg-card border border-border rounded-lg shadow-lg;
   }
 
-  /* Status badge styles */
   .badge-pending {
     @apply bg-status-pending bg-opacity-20 text-status-pending border border-status-pending border-opacity-30 px-2.5 py-1 rounded-lg text-xs font-semibold;
   }
