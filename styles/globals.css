@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background: linear-gradient(135deg, #0B0F14 0%, #0D1117 100%);
+  color: #E5E7EB;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Dark theme input styles */
+@layer components {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="date"],
+  textarea,
+  select {
+    @apply bg-card border border-border text-text-primary rounded-lg px-4 py-2.5 transition-all duration-200;
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply outline-none border-accent bg-card shadow-accent-glow;
+  }
+  
+  input::placeholder {
+    @apply text-text-muted;
+  }
+
+  /* Dark button styles */
+  .btn-primary {
+    @apply bg-accent hover:bg-amber-600 text-black font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-accent-glow disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-accent-alt hover:bg-blue-600 text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-accent-alt-glow disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent hover:bg-surface text-text-primary border border-border px-4 py-2.5 rounded-lg transition-all duration-200;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-card border border-border rounded-lg shadow-lg;
+  }
+
+  /* Status badge styles */
+  .badge-pending {
+    @apply bg-status-pending bg-opacity-20 text-status-pending border border-status-pending border-opacity-30 px-2.5 py-1 rounded-lg text-xs font-semibold;
+  }
+
+  .badge-confirmed {
+    @apply bg-status-confirmed bg-opacity-20 text-status-confirmed border border-status-confirmed border-opacity-30 px-2.5 py-1 rounded-lg text-xs font-semibold;
+  }
+
+  .badge-processing {
+    @apply bg-status-processing bg-opacity-20 text-status-processing border border-status-processing border-opacity-30 px-2.5 py-1 rounded-lg text-xs font-semibold;
+  }
+
+  .badge-delivered {
+    @apply bg-status-delivered bg-opacity-20 text-status-delivered border border-status-delivered border-opacity-30 px-2.5 py-1 rounded-lg text-xs font-semibold;
+  }
+
+  .badge-cancelled {
+    @apply bg-status-cancelled bg-opacity-20 text-status-cancelled border border-status-cancelled border-opacity-30 px-2.5 py-1 rounded-lg text-xs font-semibold;
+  }
+}

@@ -1,0 +1,34 @@
+# ShopHub robots.txt
+# Allow search engines to crawl public pages
+
+User-agent: *
+Allow: /
+Allow: /shop
+Allow: /public/
+Disallow: /admin
+Disallow: /api
+Disallow: /.git
+Disallow: /node_modules
+Disallow: /.next
+
+# Google Bot specific rules
+User-agent: Googlebot
+Allow: /
+Allow: /shop
+Disallow: /admin
+Disallow: /api
+
+# Bing Bot specific rules
+User-agent: Bingbot
+Allow: /
+Allow: /shop
+Disallow: /admin
+Disallow: /api
+
+# Other bots
+User-agent: *
+Crawl-delay: 1
+Request-rate: 1/10s
+
+# Sitemap location
+Sitemap: https://shophub.com/sitemap.xml
