@@ -21,6 +21,13 @@ model Product {
   @@index([name])
 }
 
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
 model Order {
   id            String      @id @default(cuid())
   orderNumber   String      @unique
