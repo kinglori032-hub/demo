@@ -1,29 +1,22 @@
 import { put } from "@vercel/blob";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const formData = await req.formData();
+    const { searchParams } = new URL(request.url);
+    const filename = searchParams.get("filename");
 
-    const file = formData.get("file") as File;
-
-    if (!file) {
+    if (!filename) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "No file provided",
-        },
+        { success: false, error: "Missing filename" },
         { status: 400 }
       );
     }
 
-    const blob = await put(
-      `${Date.now()}-${file.name}`,
-      file,
-      {
-        access: "public",
-      }
-    );
+    const blob = await put(filename, request.body!, {
+      access: "public",
+      addRandomSuffix: true,
+    });
 
     return NextResponse.json({
       success: true,
@@ -33,10 +26,7 @@ export async function POST(req: NextRequest) {
     console.error("Upload error:", error);
 
     return NextResponse.json(
-      {
-        success: false,
-        error: "Upload failed",
-      },
+      { success: false, error: "Upload failed" },
       { status: 500 }
     );
   }
