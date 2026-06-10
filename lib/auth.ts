@@ -1,27 +1,26 @@
 import { cookies } from "next/headers";
 import crypto from "crypto";
-import prisma from "@/lib/prisma";
+import {
+  createSession,
+  getSession,
+  deleteSession,
+  clearExpiredSessions,
+} from "./session-store";
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 const SESSION_COOKIE_NAME = "admin_session";
 const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
 
-export async function verifyAdminPassword(password: string): Promise<boolean> {
+export async function verifyAdminPassword(
+  password: string
+): Promise<boolean> {
   return password === ADMIN_PASSWORD;
 }
 
-/**
- * CREATE SESSION (NOW STORED IN DATABASE)
- */
 export async function createAdminSession(): Promise<string> {
   const token = crypto.randomBytes(32).toString("hex");
 
-  await prisma.session.create({
-    data: {
-      token,
-      expiresAt: new Date(Date.now() + SESSION_TIMEOUT),
-    },
-  });
+  createSession(token);
 
   const cookieStore = await cookies();
 
@@ -29,16 +28,13 @@ export async function createAdminSession(): Promise<string> {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: SESSION_TIMEOUT,
+    maxAge: SESSION_TIMEOUT / 1000, // seconds
     path: "/",
   });
 
   return token;
 }
 
-/**
- * GET SESSION (VALIDATES DATABASE)
- */
 export async function getAdminSession(): Promise<string | null> {
   try {
     const cookieStore = await cookies();
@@ -46,15 +42,9 @@ export async function getAdminSession(): Promise<string | null> {
 
     if (!token) return null;
 
-    const session = await prisma.session.findUnique({
-      where: { token },
-    });
+    const sessionData = getSession(token);
 
-    if (!session) return null;
-
-    // optional expiry check
-    if (session.expiresAt < new Date()) {
-      await prisma.session.delete({ where: { token } });
+    if (!sessionData) {
       return null;
     }
 
@@ -65,26 +55,18 @@ export async function getAdminSession(): Promise<string | null> {
   }
 }
 
-/**
- * CHECK AUTH
- */
 export async function isAdminAuthenticated(): Promise<boolean> {
   const session = await getAdminSession();
   return !!session;
 }
 
-/**
- * LOGOUT
- */
 export async function logoutAdmin(): Promise<void> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
     if (token) {
-      await prisma.session.deleteMany({
-        where: { token },
-      });
+      deleteSession(token);
     }
 
     cookieStore.delete(SESSION_COOKIE_NAME);
@@ -93,12 +75,14 @@ export async function logoutAdmin(): Promise<void> {
   }
 }
 
-/**
- * ORDER HELPERS (unchanged)
- */
+export async function cleanupExpiredSessions(): Promise<void> {
+  clearExpiredSessions();
+}
+
 export function generateOrderNumber(): string {
   const timestamp = Date.now().toString().slice(-8);
   const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+
   return `ORD-${timestamp}-${random}`;
 }
 
